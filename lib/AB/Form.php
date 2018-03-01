@@ -25,7 +25,7 @@ class Form
         $select .= '" name="'.$params['name'].'">'."\n";
         if(!empty($params['options'])){
             foreach($params['options'] as $item){
-                $select .= $this->setOption((int)$item['id'], $params['option_id'], $item['name'])."\n";
+                $select .= $this->setOption((int)$item['id'], $params['option_selected'], $item['name'])."\n";
             }
         }
         $select .= '</select></div>';
