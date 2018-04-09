@@ -6,7 +6,7 @@ class Form
 {
 	public function setForm($params = null){
         if(!empty($params)){
-            echo '<form>';
+            echo '<form method="post">';
             foreach($params as $fields) {
                 foreach ($fields as $field => $values) {
                     $this->$field($values);
@@ -21,20 +21,22 @@ class Form
         $select = '<div class="form-group">';
         $select .= empty($params['label']) ? null : '<label>'.$params['label'].'</label>';
         $select .= '<select class="';
-        $select .= !isset($params['class']) ? 'form-control input-lg' : $params['class'];
-        $select .= '" name="'.$params['name'].'">'."\n";
-        if(!empty($params['options'])){
+        $select .= !isset($params['class']) ? 'form-control form-control-lg"' : $params['class'].'"';
+        $select .= !isset($params['id']) ? null : ' id="'.$params['id'].'"';
+        $select .= ' name="'.$params['name'].'">'."\n";
+        $select .= '<option value="0">Please choose one</option>';
+        if($params['options']){
             foreach($params['options'] as $item){
-                $select .= $this->setOption((int)$item['id'], $params['option_selected'], $item['name'])."\n";
+                $select .= $this->setOption((int)$item['id'], $item['name'], $params['selected'])."\n";
             }
         }
         $select .= '</select></div>';
         echo $select."\n";
     }
 
-    public function setOption($value = null, $id = null, $name = null){
+    public function setOption($value = null, $name = null, $selected = null){
         $option = '<option value="'.$value.'"';
-        $option .= $value == $id ? ' selected' : null;
+        $option .= $value == $selected ? ' selected' : null;
         $option .= '>'.$name.'</option>';
         return $option;
     }
@@ -42,21 +44,44 @@ class Form
     public function setInput($params){
         $input = '<div class="form-group">';
         $input .= empty($params['label']) ? null : '<label>'.$params['label'].'</label>';
-        $input .= $params['input-group'] ?
-            '<div class="input-group"><span class="input-group-addon"><i class="'.$params['input-group'].'"></i></span>' :
-            null;
+        if(!empty($params['input-group-prepend'])){
+            $input .= '<div class="input-group input-group-lg"><div class="input-group-prepend">';
+            $input .= '<span class="input-group-text">';
+            $input .= $params['input-group-prepend'].'</span></div>';
+        }
         $input .= '<input';
+        $input .= !empty($params['id']) ? ' id="'.$params['id'].'"' : null;
         $input .= empty($params['type']) ? null : ' type="'.$params['type'].'"';
         $input .= empty($params['step']) ? null : ' step="'.$params['step'].'"';
-        $input .= ' class="';
-        $input .= !isset($params['class']) ? 'form-control input-lg' : $params['class'];
+        $input .= !$params['autocomplete'] ? null : ' autocomplete="off"';
+        $input .= ' class=" ';
+        $input .= !isset($params['class']) ? 'form-control form-control-lg' : $params['class'];
         $input .= '" name="'.$params['name'].'"';
         $input .= !empty($params['placeholder']) ? ' placeholder="'.$params['placeholder'].'"' : null;
         $input .= !empty($params['value']) ? ' value="'.$params['value'].'"' : null;
         $input .= $params['multiple'] ? ' multiple' : null;
         $input .= $params['required'] ? ' required' : null;
-        $input .= $params['input-group'] ? '></div>' : '>';
+        $input .= $params['input-group-prepend'] ? '></div>' : '>';
+        $input .= $params['validate'] ? $params['validate'] : null;
         $input .= '</div>';
+        echo $input."\n";
+    }
+
+    public function setDateInput($params = null){
+        $input = '<div class="form-group">';
+        $input .= empty($params['label']) ? null : '<label>'.$params['label'].'</label>';
+        $input .= '<div class="input-group input-group-lg">';
+        $input .= '<div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                </div>';
+        $input .= '<input class="form-control input-lg" id="'.$params['id'].'" type="text" name="'.$params['name'].'"';
+        $input .= !empty($params['value']) ? ' value="'.$params['value'].'"' : null;
+        $input .= '></div></div>';
+        $input .= '<script>$("#'.$params['id'].'").datepicker({';
+        $input .= empty($params['format']) ? 'format: "dd/M/yyyy",' : 'format: "'.$params['format'].'",';
+        $input .= ' autoclose: true';
+        $input .= !empty($params['end_date']) ? ', endDate: "'.$params['end_date'].'"' : null;
+        $input .= '});</script>';
         echo $input."\n";
     }
 
@@ -68,8 +93,10 @@ class Form
         $text .= !isset($params['class']) ? 'form-control' : $params['class'];
         $text .= '" name="'.$params['name'].'"';
         $text .= !empty($params['id']) ? ' id="'.$params['id'].'"' : null;
-        $text .= '></textarea>';
+        $text .= !empty($params['placeholder']) ? ' placeholder="'.$params['placeholder'].'"' : null;
+        $text .= '>'.$params['value'].'</textarea>';
         $text .= '</div>';
+        $text .= $params['no_ckeditor'] ? null : '<script>CKEDITOR.replace("'.$params['id'].'");</script>';
         echo $text."\n";
     }
 
@@ -88,11 +115,11 @@ class Form
     }
 
     public function setSubmit($params = null){
-        $submit = '<div class="form-group-lg">';
+        $submit = '<div class="form-group form-group-lg">';
         $submit .= '<input type="submit"';
         $submit .= !empty($params['name']) ? ' name = "'.$params["name"].'"' : ' name="submit"';
         $submit .= !empty($params['class']) ? ' class="'.$params['class'].'"' : ' class="form-control btn btn-primary btn-lg"';
-        $submit .= !empty($params['value']) ? ' value="'.$params['value'].'"' : ' value="Сохранить"';
+        $submit .= !empty($params['value']) ? ' value="'.$params['value'].'"' : ' value="Save"';
         $submit .= '>';
         $submit .= '</div>';
         echo $submit."\n";
