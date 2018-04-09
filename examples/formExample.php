@@ -8,17 +8,19 @@ $Form->setForm([
     ['setSelect' => [
         'label' => 'select',
         'name' => 'select_name',
-        'options' => [1 => 'option1', 1 => 'option2'],
-        'option_selected' => 2
+        'options' => [1 => 'option1', 2 => 'option2'],
+        'selected' => 2
     ]],
     ['setInput' => [
         'label' => 'input',
+        'name' => 'input_name',
         'placeholder' => 'placeholder',
         'value' => 'Some text'
     ]],
     ['setInput' => [
-        'label' => 'another input',
-        'placeholder' => 'empty one'
+        'name' => 'another_input',
+        'placeholder' => 'empty one',
+        'type' => 'hidden'
     ]],
     ['setTextArea' => [
         'label' => 'Text Area',
